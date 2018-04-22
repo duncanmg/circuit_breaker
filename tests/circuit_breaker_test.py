@@ -1,3 +1,5 @@
+# duncan@Python18:~/circuit-breaker$ PYTHONPATH=`pwd` nosetests -v tests/circuit_breaker_test.py
+
 from nose import with_setup
 from circuit_breaker import CircuitBreaker
 from time import sleep
