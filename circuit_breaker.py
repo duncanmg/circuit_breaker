@@ -4,8 +4,9 @@ class CircuitBreaker:
 
   max_age = 60
   threshold = 3
+  num_failures = 0
 
-  failures = list()
+  last_failure_time = ""
 
   sink = ""
   source = ""
@@ -14,6 +15,7 @@ class CircuitBreaker:
     if self.is_closed():
       try:
         external_call()
+        self.reset_num_failures()
       except Exception as e:
         self.process_error(e)
         raise
@@ -21,25 +23,19 @@ class CircuitBreaker:
       raise Exception('Circuit Breaker open')
     
   def is_closed(self):
-    failures = self.get_failures()
-    count = 0
 
-    while len(failures) and failures[0][0] < int(time.time()) - self.max_age:
-      failures.pop(0)
-      count = count + 1
-
-    if count > 0:
-      self.set_failures(failures)
-
-    if len(failures) < self.threshold:
+    if self.num_failures < self.threshold:
       return True
-    else:
-      return False
+
+    if self.last_failure_time >= (int(time.time()) - self.max_age):
+      return False;
+
+    self.reset_num_failures()
+ 
+    return True
       
   def process_error(self, e):
-    failures = self.get_failures()
-    failures.append((time.time(), e))
-    self.set_failures(failures)
+    self.increment_num_failures()
   
   def get_failures(self):
     if self.source:
@@ -61,4 +57,13 @@ class CircuitBreaker:
 
   def set_storage_sink(self,sink):
     self.sink = sink
+
+  def reset_num_failures(self):
+    self.last_failure_time = ""
+    self.num_failures = 0
+
+  def increment_num_failures(self):
+    self.num_failures = self.num_failures + 1
+    self.last_failure_time = time.time()
+
 

@@ -17,4 +17,4 @@ except Exception as e:
   print e
 
 
-print cb.failures
+print cb.num_failures

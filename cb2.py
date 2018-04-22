@@ -6,11 +6,11 @@ def main_call_success():
   print "main_call_success: Call succeeded"
 
 def main_call_failure():
-  sleep(10)
+  sleep(3)
   raise Exception("Exception in main_call_failure")
 
 def random_call():
-  if randrange(0,10) < 5: 
+  if randrange(0,10) < 2: 
     print "Success"
     return main_call_success()
   else: 
@@ -25,4 +25,3 @@ for x in range(0,1000):
     cb.protect(random_call)
   except Exception as e:
     print e
-  print cb.failures
