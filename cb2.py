@@ -6,18 +6,17 @@ def main_call_success():
   print "main_call_success: Call succeeded"
 
 def main_call_failure():
-  sleep(3)
+  sleep(5)
   raise Exception("Exception in main_call_failure")
 
 def random_call():
-  if randrange(0,10) < 2: 
-    print "Success"
+  if randrange(0,10) < 3: 
     return main_call_success()
   else: 
-    print "Failure"
     return main_call_failure()
 
 cb = CircuitBreaker()
+cb.max_age = 30
 
 for x in range(0,1000):
   sleep(1)
