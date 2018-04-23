@@ -9,22 +9,27 @@ num_failures = 0
 last_failure_time = ""
 
 def source():
+  """ Mock source function which reads global variables. """
   global num_failures, last_failure_time
   return (num_failures, last_failure_time)
 
 
 def sink(nf, lft):
+  """ Mock sink function which sets global variables. """
   global num_failures, last_failure_time
   num_failures = nf
   last_failure_time = lft
 
 def main_call_success():
+  """ Mock success. """
   print "main_call_success: Call succeeded"
 
 def main_call_failure():
+  """ Mock failure. """
   raise Exception("Exception in main_call_failure")
 
 def test():
+  """ Test failure runs, ignore exception. """
   cb = CircuitBreaker()
   cb.set_storage_source(source)
   cb.set_storage_sink(sink)
@@ -35,11 +40,13 @@ def test():
     pass
 
 def test_globals():
+  """ Test that global variables have been changed. """
   global num_failures, last_failure_time
   assert num_failures == 1
   assert last_failure_time > 0
 
 def test_different_object():
+  """ Test failure runs with different object, ignore exception. """
   cb2 = CircuitBreaker()
   cb2.set_storage_source(source)
   cb2.set_storage_sink(sink)
@@ -50,6 +57,7 @@ def test_different_object():
     pass
 
 def test_globals_persist():
+  """ Test that totals persisted. """
   global num_failures, last_failure_time
   print num_failures
   assert num_failures == 2
